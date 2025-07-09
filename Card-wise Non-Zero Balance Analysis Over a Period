@@ -1,0 +1,25 @@
+SELECT 
+    filtered.card_id AS card_id,
+    filtered.amount
+FROM 
+    (
+        SELECT 
+            card_id, 
+            SUM(amount) AS amount
+        FROM 
+            card_apps_balance_entries
+        WHERE 
+            created_time <= '2025-06-30 18:30:00'
+        GROUP BY 
+            card_id
+        HAVING 
+            SUM(amount) > 0
+    ) AS filtered
+JOIN 
+    card ON filtered.card_id = card.card_id
+JOIN 
+    card_program ON card.card_program_id = card_program.card_program_id
+JOIN 
+    issuer_program AS issuer_program_id ON card_program.issuer_program_id = issuer_program_id.id
+WHERE 
+    issuer_program_id.bin IN ('981254', '896734');
