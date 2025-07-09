@@ -1,0 +1,12 @@
+SELECT cabe.card_id
+FROM card_apps_balance_entries AS cabe
+JOIN card AS c ON cabe.card_id = c.card_id
+JOIN card_program AS cp ON c.card_program_id = cp.card_program_id
+JOIN issuer_program AS ip ON cp.issuer_program_id = ip.id
+WHERE ip.bin in ('818765', '908765')
+AND NOT EXISTS (
+    SELECT 1
+    FROM card_apps_balance_entries
+    WHERE card_id = cabe.card_id
+    AND created_time >= '2025-06-30 18:30:00' - INTERVAL 1 YEAR)
+GROUP BY cabe.card_id;
