@@ -1,0 +1,31 @@
+WITH
+  FilteredCardData AS (
+    SELECT
+      card.card_id,
+      card.card_program_id,
+      card.customer_id,
+      card.card_status,
+      card.created_time,
+      card.last4_digit,
+      card.expired_by,
+      card.activated_time,
+      card.card_mode,
+      card.org_id,
+      card.org_name,
+      issuer_program.program_name,
+      issuer_program.bin
+    FROM
+      card
+      INNER JOIN card_program ON card.card_program_id = card_program.card_program_id
+      INNER JOIN issuer_program ON card_program.issuer_program_id = issuer_program.id
+    WHERE
+      issuer_program.bin IN ('817987', '817865')
+  )
+SELECT
+  *
+FROM
+  FilteredCardData
+WHERE
+  card_id IS NOT NULL
+ORDER BY
+  created_time ASC;
