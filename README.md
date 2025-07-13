@@ -6,6 +6,6 @@ A collection of real-world SQL queries solving business and data problems. Each 
 
 ## 📁 Projects
 
-- [💳 Non-Zero Balance Card Identification](./non-zero-balance/)
-- [🕒 Inactive Card Detection](./inactive-cards/)
-- [💼 Prepaid Card Usage Analysis](./prepaid-analysis/)
+- [💳 Non-Zero Balance Card Identification]
+- [🕒 Inactive Card Detection]
+- [💼 Prepaid Card Usage Analysis]
