@@ -63,10 +63,11 @@ FROM
             SUM(amount) > 0
     ) AS filtered
 INNER JOIN 
-    card ON filtered.card_id = card.card_id
+    card AS c ON filtered.card_id = c.card_id
 INNER JOIN 
-    card_program ON card.card_program_id = card_program.card_program_id
+    card_program AS cp ON c.card_program_id = cp.card_program_id
 INNER JOIN 
-    issuer_program AS ip ON card_program.issuer_program_id = ip.id
+    issuer_program AS ip ON cp.issuer_program_id = ip.id
 WHERE 
     ip.bin IN ('981254', '896734');
+
