@@ -1,3 +1,47 @@
+# 💳 NON ZERO Balance Card Identification
+
+## 🔍 Objective
+
+Identify all customer cards that have a **non-zero balance** as of June 30, 2025, and belong to specific issuer programs (by BIN). This can support business actions such as refunds, customer outreach, or balance utilization campaigns.
+
+---
+
+## 🗃️ Data Used
+
+- **card_apps_balance_entries**: stores transactional balance data by card and timestamp  
+- **card**: card master metadata  
+- **card_program**: mapping of cards to their respective programs  
+- **issuer_program**: contains issuer details, including BINs  
+
+---
+
+## 🧠 Logic & Approach
+
+1. **Aggregate** the `amount` from `card_apps_balance_entries` grouped by `card_id` for transactions **up to June 30, 2025**
+2. **Filter** for cards with total `amount > 0`
+3. **Join** the results with the card and program details
+4. **Filter** issuer programs based on specified BINs: `'981254'`, `'896734'`
+
+---
+
+## 🛠️ SQL Techniques Used
+
+- Subquery with aggregation
+- `HAVING` clause for conditional filtering
+- `JOIN`s across multiple reference tables
+- Date filtering (`created_time <= '2025-06-30'`)
+- Filtering with `IN` clause
+
+---
+
+## 💡 Sample Business Use Cases
+
+- Detect **unutilized balances** for customer follow-up
+- Drive **customer engagement** through reminders or incentives
+- Identify cards for **refund processing** or **inactivity monitoring**
+
+
+
 SELECT 
     filtered.card_id AS card_id,
     filtered.amount
@@ -15,11 +59,11 @@ FROM
         HAVING 
             SUM(amount) > 0
     ) AS filtered
-JOIN 
+INNER JOIN 
     card ON filtered.card_id = card.card_id
-JOIN 
+INNER JOIN 
     card_program ON card.card_program_id = card_program.card_program_id
-JOIN 
+INNER JOIN 
     issuer_program AS issuer_program_id ON card_program.issuer_program_id = issuer_program_id.id
 WHERE 
     issuer_program_id.bin IN ('981254', '896734');
