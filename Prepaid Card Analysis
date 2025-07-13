@@ -1,3 +1,50 @@
+# 📇 Card Metadata by Issuer BIN
+
+## 🔍 Objective
+
+Retrieve detailed information for all cards issued under specific BINs (`817987`, `817865`) — including their status, activation details, customer, and issuer program info. This supports operational reporting, BIN-level audits, and lifecycle tracking.
+
+---
+
+## 🗃️ Data Tables Used
+
+- **card**: Core card metadata (status, activation, expiry, etc.)  
+- **card_program**: Links each card to its issuer program  
+- **issuer_program**: Contains issuer-level metadata, including BIN and program name  
+
+---
+
+## 🧠 Logic & Approach
+
+1. Use a **Common Table Expression (CTE)** to join `card`, `card_program`, and `issuer_program`  
+2. Filter only for BINs: `'817987'`, `'817865'`  
+3. Select key card-level fields: `card_status`, `created_time`, `expired_by`, `card_mode`, etc.  
+4. Output clean card metadata, ordered by card creation time  
+
+---
+
+## 🛠️ SQL Techniques Used
+
+- `WITH` clause (CTE) for query modularity and readability  
+- `INNER JOIN` to enrich card data with issuer and program details  
+- `ORDER BY` for chronological sorting  
+- Basic filtering with `WHERE` and `IS NOT NULL`  
+
+---
+
+## 💡 Business Use Cases
+
+- Generate **BIN-level card lifecycle reports**  
+- Track cards by **creation date, activation, or expiry**  
+- Use as a base for **audit reports** or **BIN-level KPIs**  
+- Segment cards by **issuer program** for deeper analytics  
+- Monitor **card mode (physical/virtual)** or **card status trends**
+
+---
+
+## 🧾 SQL Query
+
+```sql
 WITH
   FilteredCardData AS (
     SELECT
