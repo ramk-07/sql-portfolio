@@ -1,3 +1,29 @@
+# 💳 Non-Zero Balance Card Identification
+
+## 🔍 Objective
+Identify customer cards with a **positive balance** as of June 30, 2025, filtered by specific issuer BINs for targeted business actions like refunds and outreach.
+
+## 🗃️ Data Used
+- **card_apps_balance_entries**: Transactional balance entries per card  
+- **card**: Card metadata  
+- **card_program**: Card to program mapping  
+- **issuer_program**: Issuer details including BINs  
+
+## 🧠 Logic & Approach
+1. Aggregate total balance per card up to June 30, 2025  
+2. Filter for cards with sum(amount) > 0  
+3. Join card, card_program, and issuer_program for enriched info  
+4. Filter issuer programs by BIN (`'981254'`, `'896734'`)  
+
+## 🛠️ SQL Techniques
+- Subquery aggregation with `SUM()` and `HAVING`  
+- Multi-table `INNER JOIN`s  
+- Date filtering  
+- Conditional filtering with `IN` clause  
+
+## 🧾 SQL Query
+
+```sql
 SELECT 
     filtered.card_id AS card_id,
     filtered.amount
