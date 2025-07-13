@@ -1,12 +1,61 @@
+# 🕒 Inactive Cards in the Past 1 Year
+
+## 🔍 Objective
+
+Identify customer cards issued under specific BINs that have had **no balance activity** in the **12 months** leading up to June 30, 2025. This can help teams prioritize inactive accounts for closure, re-engagement, or fraud monitoring.
+
+---
+
+## 🗃️ Data Tables Used
+
+- **card_apps_balance_entries**: Stores balance entry history per card  
+- **card**: Card metadata  
+- **card_program**: Maps cards to their programs  
+- **issuer_program**: Contains BIN and issuer details  
+
+---
+
+## 🧠 Logic & Approach
+
+1. Join balance entries with card metadata and issuer program info  
+2. Filter for cards belonging to issuer programs with BINs `818765` or `908765`  
+3. Use `NOT EXISTS` to exclude cards with any balance entries between  
+   **June 30, 2024 and June 30, 2025**
+4. Return distinct `card_id`s
+
+---
+
+## 🛠️ SQL Techniques Used
+
+- `INNER JOIN` across multiple tables  
+- `NOT EXISTS` subquery for inactivity detection  
+- Date filtering with `INTERVAL 1 YEAR`  
+- `GROUP BY` to ensure unique card records  
+
+---
+
+## 💡 Business Use Cases
+
+- **Customer re-engagement**: Target inactive users with promotions or reminders  
+- **Risk management**: Flag dormant cards for fraud monitoring or closure  
+- **Operational cleanup**: Identify accounts eligible for deactivation or archiving  
+- **Compliance auditing**: Ensure adherence to inactivity-based card policies  
+
+---
+
+## 🧾 SQL Query
+
+```sql
 SELECT cabe.card_id
 FROM card_apps_balance_entries AS cabe
 JOIN card AS c ON cabe.card_id = c.card_id
 JOIN card_program AS cp ON c.card_program_id = cp.card_program_id
 JOIN issuer_program AS ip ON cp.issuer_program_id = ip.id
-WHERE ip.bin in ('818765', '908765')
+WHERE ip.bin IN ('818765', '908765')
 AND NOT EXISTS (
     SELECT 1
     FROM card_apps_balance_entries
     WHERE card_id = cabe.card_id
-    AND created_time >= '2025-06-30 18:30:00' - INTERVAL 1 YEAR)
+    AND created_time >= '2025-06-30 18:30:00' - INTERVAL 1 YEAR
+)
 GROUP BY cabe.card_id;
